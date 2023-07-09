@@ -5,42 +5,51 @@ var array = [];
 var sortArray=[];
 var arrayCreated=false;
 var comparison=0,swaps=0;
+
 function setArray() 
 {
 	array = [];
-  vis=[];
-  dist=[];
-  comparison=0,swaps=0;
-	for ( let i = 0; i < rows ; i++)
-	{
-		let row = [];
-		for( let j = 0; j < cols; j++)
+	vis=[];
+	dist=[];
+	comparison=0,swaps=0;
+		for ( let i = 0; i < rows ; i++)
 		{
-			row.push(0);
-      		sortArray.push(0);
+			let row = [];
+			for( let j = 0; j < cols; j++)
+			{
+				row.push(0);
+				sortArray.push(0);
+			}
+			array.push(row);
+		vis.push(row);
+		dist.push(row);
 		}
-		array.push(row);
-    vis.push(row);
-    dist.push(row);
-	}
 }
+
 var source,dest;
+
 function createGrid()
 {
+	var graph = document.getElementById("Graph");
+	graph.innerHTML =  '<button id="Run BFS">Run BFS</button>' + '<span>&nbsp;&nbsp;</span>' + '<button id="Run DFS">Run DFS</button>';
+
   
-  rows=document.getElementById("Rows").value;
-  cols=document.getElementById("Cols").value;
-  
-  setArray();
-  var gridRows = "";
+	rows=document.getElementById("Rows").value;
+	cols=document.getElementById("Cols").value;
+	
+	setArray();
+
+	var gridRows = "";
 	var gridBoxes = "";
+
 	rowLength = cols;
 	columnLength = rows;
 	var i, j;
+
 	for (i = 0; i < columnLength; i++) {			//adding <div></div> to the existing html element to create the grid
 		gridBoxes = "";
 		for(j = 0; j < rowLength; j++) {
-      // <div class="box" id ="1,2" ></div>
+	// <div class="box" id ="1,2" ></div>
 			gridBoxes +='<div class="col" id="'+i+","+j+'"></div>' ;
 			array[i][j] = 0;
 		}
@@ -49,33 +58,46 @@ function createGrid()
 	var container = document.getElementById("grid");
 	container.innerHTML = gridRows;				//rows are added to existing html element
 
-   source=document.getElementById("0,0");
-  source.innerText="S";
-  dest=document.getElementById((rows-1)+","+(cols-1));
-  dest.innerText="D";
-  var cells=document.getElementsByClassName("col");
-  for(var i=0;i<cells.length;i++)
-  {
-    cells[i].addEventListener("click",function(){
-      var x=parseInt(this.id.split(",")[0]);
-      var y=parseInt(this.id.split(",")[1]);
-      
-      if(this.innerText==="X")
-      {
-        array[x][y]=1;
-        this.innerText='';
-      }
-      else if(!(this.innerText==="S")){
-      	array[x][y]="#";
-      this.innerText="X";
-  }
-    })
-  }
-  var createArrayButn=document.getElementById("array");
-  createArrayButn.remove();
+	source=document.getElementById("0,0");
+	source.innerText="S";
+	dest=document.getElementById((rows-1)+","+(cols-1));
+	dest.innerText="D";
+	
+	var cells=document.getElementsByClassName("col");
+	for(var i=0;i<cells.length;i++)
+	{
+		cells[i].addEventListener("click",function(){
+		var x=parseInt(this.id.split(",")[0]);
+		var y=parseInt(this.id.split(",")[1]);
+		
+		if(this.innerText==="X")
+		{
+			array[x][y]=1;
+			this.innerText='';
+		}
+		else if(!(this.innerText==="S")){
+			array[x][y]="#";
+		this.innerText="X";
+	}
+		})
+	}
+
+	var createArrayBtn = document.getElementById("array");
+	createArrayBtn.remove();
+	var createGridBtn = document.getElementById("createGrid")
+	createGridBtn.remove();
+
+	var runBFS=document.getElementById("Run BFS");
+	runBFS.addEventListener("click",bfs);
+
+	var runDFS=document.getElementById("Run DFS");
+	runDFS.addEventListener("click",dfsUtil);
 }
+
 async function BubbleSort()
 {
+	let total_time = 0;
+
 	console.log("HH");
 	var n=cols;
 	comparison=0,swaps=0;
@@ -95,6 +117,7 @@ async function BubbleSort()
 					        setTimeout(() => {
 					          resolve();
 					        }, 1000))
+				total_time += 1;
 				var c=sortArray[j];
 				sortArray[j]=sortArray[j+1];
 				sortArray[j+1]=c;
@@ -106,7 +129,7 @@ async function BubbleSort()
 					        setTimeout(() => {
 					          resolve();
 					        }, 1000))
-				
+				total_time += 1;
 			}
 			comparison++;
 		}
@@ -116,11 +139,14 @@ async function BubbleSort()
 					        setTimeout(() => {
 					          resolve();
 					        }, 1000))
+		total_time += 1;
 	}
-	
+	alert("Number of comparisons: "+comparison+'\nTotal time taken: '+total_time+' seconds');
 }
+
 async function SelectionSort()
 {
+	let total_time = 0;
 	// 5 7 6 4 2
 	// 2 7 6 4 5
 	// 2 4 6 7 5
@@ -140,6 +166,8 @@ async function SelectionSort()
 					        setTimeout(() => {
 					          resolve();
 					        }, 1000))
+			total_time += 1;
+
 			if(mn>sortArray[j])
 			{
 				
@@ -171,6 +199,8 @@ async function SelectionSort()
 					        setTimeout(() => {
 					          resolve();
 					        }, 1000))
+		total_time += 1;
+
 		for(var j=i+1;j<n;j++){
 			if(j!=pointer){
 			var traversed=document.getElementById((0)+","+(j));
@@ -194,12 +224,16 @@ async function SelectionSort()
 					        setTimeout(() => {
 					          resolve();
 					        }, 1000))
+		total_time += 1;
 	}
 	console.log(sortArray);
-
+	alert("Number of comparisons: "+comparison+'\nTotal time taken: '+total_time+' seconds');
 }
+
 async function InsertionSort()
 {
+	let total_time = 0;
+
 	var n=cols;
 	comparison=0,swaps=0;
 	for(var i=0;i<n;i++)
@@ -207,20 +241,22 @@ async function InsertionSort()
 		var optimal=i;
 		// 5 7 10     15 20 8
 		// 	optimal
-		  var insertElement=document.getElementById((0)+","+(i));
-		  insertElement.style.backgroundColor="red";
-		  await new Promise((resolve) =>
-					        setTimeout(() => {
-					          resolve();
-					        }, 1000))
+		var insertElement=document.getElementById((0)+","+(i));
+		insertElement.style.backgroundColor="red";
+		await new Promise((resolve) =>
+						setTimeout(() => {
+							resolve();
+						}, 1000))
+		total_time += 1;
+		
 		for(var j=0;j<=i-1;j++)
 		{
 			if(sortArray[j]>sortArray[i])
 				{
-					comparison++;
 					optimal=j;
 					break;
 				}
+			comparison++;
 		}
 
 		var j=i-1;
@@ -241,7 +277,7 @@ async function InsertionSort()
 					        setTimeout(() => {
 					          resolve();
 					        }, 1000))
-				
+				total_time += 1;
 				j--;
 		}
 		document.getElementById((0)+","+(optimal)).style.backgroundColor="green";
@@ -249,11 +285,12 @@ async function InsertionSort()
 					        setTimeout(() => {
 					          resolve();
 					        }, 1000))
-
+		total_time += 1;
 	}
 	console.log(sortArray);
-
+	alert("Number of comparisons: "+comparison+'\nTotal time taken: '+total_time+' seconds');
 }
+
 function createArray()
 {
 	arrayCreated=true;
@@ -264,15 +301,16 @@ function createArray()
 	var merge='<button id="MergeSort">MergeSort</button>';
 	arrayContainer.innerHTML=bubble+selection+insertion+merge;
 
-rows=1;
-  cols=document.getElementById("Cols").value;
+  	rows=1;
+  	cols=document.getElementById("Cols").value;
   
-  setArray();
-  var gridRows = "";
+  	setArray();
+  	var gridRows = "";
 	var gridBoxes = "";
 	rowLength = cols;
 	columnLength = rows;
 	var i, j;
+
 	for (i = 0; i < columnLength; i++) {			//adding <div></div> to the existing html element to create the grid
 		gridBoxes = "";
 		for(j = 0; j < rowLength; j++) {
@@ -282,27 +320,35 @@ rows=1;
 		}
 		gridRows += '<div class="row">' + gridBoxes + '</div>';				//boxes are added to rows
 	}
+
 	var container = document.getElementById("grid1");
 	container.innerHTML = gridRows;
-	var runDFS=document.getElementById("Run DFS");
-	runDFS.remove();
-	var runBFS=document.getElementById("Run BFS");
-	runBFS.remove();
-	document.getElementById("createGrid").remove();
+
+	// var runDFS=document.getElementById("Run DFS");
+	// runDFS.remove();
+	// var runBFS=document.getElementById("Run BFS");
+	// runBFS.remove();
+
+	var createArrayBtn = document.getElementById("array");
+	createArrayBtn.remove();
+	var createGridBtn = document.getElementById("createGrid")
+	createGridBtn.remove();
+
 	var cells=document.getElementsByClassName("col");
-  for(var i=0;i<cells.length;i++)
-  {
-    cells[i].addEventListener("click",function(){
-      var x=parseInt(this.id.split(",")[0]);
-      var y=parseInt(this.id.split(",")[1]);
-      
-      var val=parseInt(prompt("Enter value at "+(y+1)+": "));
-      sortArray[y]=val;
-      if(isNaN(val))
-      this.innerText=0;
-  else
-      this.innerText=val;
-    })
+
+	for(var i=0;i<cells.length;i++)
+	{
+		cells[i].addEventListener("click",function(){
+		var x=parseInt(this.id.split(",")[0]);
+		var y=parseInt(this.id.split(",")[1]);
+		
+		var val=parseInt(prompt("Enter value at "+(y+1)+": "));
+		sortArray[y]=val;
+		if(isNaN(val))
+		this.innerText=0;
+	else
+		this.innerText=val;
+		})
   }
   var bubbleSort=document.getElementById("BubbleSort");
   var selectionSort=document.getElementById("SelectionSort");
@@ -313,9 +359,10 @@ rows=1;
  insertionSort.addEventListener("click",InsertionSort);
  mergeSort.addEventListener("click",MergeSort);
 }
+
  async function MergeSortUtil(l,r)
 {
-
+	
 if(l<r){
 	
 		var mid=(parseInt((l+r)/2));
@@ -347,7 +394,7 @@ if(l<r){
 	  await new Promise((resolve) =>
         setTimeout(() => {
           resolve();
-        }, 5000))
+        }, 1000))
 	}
 	for(var i=l;i<=r;i++)
 	{
@@ -356,6 +403,7 @@ if(l<r){
 		init.style.backgroundColor="white";
 	}
 }
+
  function mergeUtil(l1,r1,l2,r2)
 {
 
@@ -384,71 +432,26 @@ if(l<r){
 	for(var pos=l1;pos<=r2;pos++)
 		sortArray[pos]=temp[j++];
 }
-var sortArray1=[];
-function dummyMergeSortUtil(l,r)
+
+async function MergeSort()
 {
-
-if(l<r){
-	
-		var mid=(parseInt((l+r)/2));
-
-	  dummyMergeSortUtil(l,mid);
-	
-	  dummyMergeSortUtil(mid+1,r);
-	
-	 dummymergeUtil(l,mid,mid+1,r);
-	
-}
-}
- function dummymergeUtil(l1,r1,l2,r2)
-{
-
-	var temp=[];
-	var i1=l1,i2=l2;
-	while((i1<=r1) && (i2<=r2))
-	{
-		if(sortArray1[i1]<=sortArray1[i2])
-		{
-			temp.push(sortArray1[i1++]);
-		}
-		else
-		{
-			temp.push(sortArray1[i2++]);
-		}
-		comparison++;
-	}
-	while(i1<=r1)
-	{
-		temp.push(sortArray1[i1++]);
-		comparison++;
-	}
-	while(i2<=r2)
-	{
-		temp.push(sortArray1[i2++]);
-		comparison++;
-	}
-	var j=0;
-	for(var pos=l1;pos<=r2;pos++)
-		sortArray1[pos]=temp[j++];
-}
-function MergeSort()
-{
-
-	var n=cols;
-	comparison=0,swaps=0;
-MergeSortUtil(0,n-1);
-
-for(var i=0;i<sortArray.length;i++)
-sortArray1.push(sortArray[i]);
 var start = window.performance.now();
-dummyMergeSortUtil(0,n-1);
-// console.log(sortArray1);
+var n=cols;
+comparison=0,swaps=0;
+
+ await MergeSortUtil(0,n-1);
+
 var end = window.performance.now();
-var time = end - start;
-console.log(time);
+let total_time = end - start;
+
+total_time = parseInt(total_time/1000);
+alert('Total time taken: '+total_time+' seconds');
+	
 }
+
 var createArrayButn=document.getElementById("array");
 createArrayButn.addEventListener("click",createArray);
+
 async function bfs(){
   var queue=[];
   queue.push([0,0]);
@@ -486,15 +489,15 @@ async function bfs(){
 }
   }
 }
-var runBFS=document.getElementById("Run BFS");
-runBFS.addEventListener("click",bfs);
+
 
 var createGridButton=document.getElementById("createGrid");
 createGridButton.addEventListener("click",createGrid);
-var runDFS=document.getElementById("Run DFS");
+
 var dx=[-1,0,0,1];
 var dy=[0,-1,1,0];
 var calls=0;
+
 async function dfs(i,j)
 {
   vis[i][j]=1;
@@ -527,8 +530,7 @@ async function dfs(i,j)
 
 function dfsUtil()
 {
-  var srci=0,srcj=0;
-  calls=0;
-  dfs(srci,srcj);
+	var srci=0,srcj=0;
+	calls=0;
+	dfs(srci,srcj);
 }
-runDFS.addEventListener("click",dfsUtil);
